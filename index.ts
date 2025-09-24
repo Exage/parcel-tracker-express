@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 
 import healthRouter from './routes/health.routes'
+import userRouter from './routes/user.routes'
 
 import { logger } from './middlewares/logger.middleware'
 
@@ -16,6 +17,7 @@ app.use(express.json())
 app.use(logger)
 
 app.use('/api/health', healthRouter)
+app.use('/api/user', userRouter)
 
 mongoose
     .connect(process.env.MONGO_URI || '')
