@@ -89,7 +89,7 @@ userSchema.statics.getUser = async function ({ _id }, select = '') {
         throw Error(USER_ERRORS.ID_REQUIRED)
     }
 
-    const user = this.findById(_id)
+    const user = await this.findById(_id)
         .select(select + ' -password -role')
         .lean()
 
