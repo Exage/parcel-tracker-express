@@ -11,16 +11,23 @@ export interface IUser {
 }
 
 export interface UserStatics {
-    signup({
-        email,
-        password,
-        firstname,
-    }: {
-        email: string
-        password: string
-        firstname: string
-    }): Promise<IUser>
-    signin({ email, password }: { email: string; password: string }): Promise<IUser>
+    signup(
+        {
+            email,
+            password,
+            firstname,
+        }: {
+            email: string
+            password: string
+            firstname: string
+        },
+        select?: string
+    ): Promise<IUser>
+    signin(
+        { email, password }: { email: string; password: string },
+        select?: string
+    ): Promise<IUser>
+    getUser({ _id }: { _id: string }, select?: string): Promise<IUser>
 }
 
 export type UserModel = Model<IUser> & UserStatics
