@@ -80,20 +80,11 @@ export const profile = async (req: AuthRequest, res: Response) => {
 
         const user = await User.getUser({ _id: userId })
 
-        const token = createToken({ _id: userId })
-
-        res.cookie('jwt', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
+        res.status(HTTP_STATUS.OK).json({
+            status: RESPONSE_STATUS.OK,
+            code: HTTP_STATUS.OK,
+            user,
         })
-            .status(HTTP_STATUS.OK)
-            .json({
-                status: RESPONSE_STATUS.OK,
-                code: HTTP_STATUS.OK,
-                user,
-            })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
 
