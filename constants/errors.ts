@@ -9,6 +9,7 @@ export const USER_ERRORS = {
 
 export const COMMON_ERRORS = {
     UNEXPECTED: 'Unexpected error',
+    ROUTE_NOT_FOUND: 'Route not found',
 }
 
 export const AUTH_ERRORS = {
