@@ -1,11 +1,16 @@
 import dotenv from 'dotenv'
-import express, { NextFunction, Request, Response } from 'express'
+import express, { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 
-import healthRouter from './routes/health.routes'
-import userRouter from './routes/user.routes'
+// Client Routes
+import healthClientRouter from './routes/client/health.routes'
+import userClientRouter from './routes/client/user.routes'
+
+// Client Routes
+import signinAdminRouter from './routes/admin/signin.routes'
+import usersAdminRouter from './routes/admin/users.routes'
 
 import { logger } from './middlewares/logger.middleware'
 
@@ -22,8 +27,13 @@ app.use(cookieParser())
 
 app.use(logger)
 
-app.use('/api/health', healthRouter)
-app.use('/api/user', userRouter)
+// Client Routes
+app.use('/api/health', healthClientRouter)
+app.use('/api/user', userClientRouter)
+
+// Admin Routes
+app.use('/api/admin/signin', signinAdminRouter)
+app.use('/api/admin/users', usersAdminRouter)
 
 app.use((_: Request, res: Response) => {
     res.status(HTTP_STATUS.NOT_FOUND).json({

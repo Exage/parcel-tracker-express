@@ -5,6 +5,14 @@ export const USER_ERRORS = {
     ALREADY_EXISTS: 'This user already exists!',
     NOT_FOUND: 'This user was not found!',
     ID_REQUIRED: 'User ID is required!',
+    EMAIL_REQUIRED: 'Email is required!',
+    PASSWORD_REQUIRED: 'Password is required!',
+    INVALID_ROLE: 'Invalid user role!',
+    PASSWORD_SAME_AS_OLD: 'New password must be different from the old one.',
+
+    ADMIN_EMAIL_EXIST: 'A user with this email already exists',
+    ADMIN_PHONE_EXIST: 'A user with this phone number already exists',
+    ADMIN_SAME_ID: 'You cannot perform this action on your own account.',
 }
 
 export const COMMON_ERRORS = {

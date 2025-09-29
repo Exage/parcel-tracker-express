@@ -27,7 +27,65 @@ export interface UserStatics {
         { email, password }: { email: string; password: string },
         select?: string
     ): Promise<IUser>
+    adminSignin(
+        { email, password }: { email: string; password: string },
+        select?: string
+    ): Promise<IUser>
     getUser({ _id }: { _id: string }, select?: string): Promise<IUser>
+    createUser(
+        {
+            email,
+            firstname,
+            password,
+            lastname,
+            phone,
+            role,
+        }: {
+            email: string
+            password: string
+            firstname?: string
+            lastname?: string
+            phone?: string
+            role?: string
+        },
+        select?: string
+    ): Promise<IUser>
+    patchUser(
+        {
+            _id,
+            email,
+            firstname,
+            lastname,
+            phone,
+            role,
+        }: {
+            _id: string
+            email: string
+            firstname?: string
+            lastname?: string
+            phone?: string
+            role?: string
+        },
+        select?: string
+    )
+    deleteUser(
+        {
+            _id,
+        }: {
+            _id: string
+        },
+        select?: string
+    ): Promise<IUser>
+    resetPassword(
+        {
+            _id,
+            password,
+        }: {
+            _id: string
+            password: string
+        },
+        select?: string
+    ): Promise<IUser>
 }
 
 export type UserModel = Model<IUser> & UserStatics

@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
-import { User } from '../models/user'
-import { createToken } from '../utils/jwt'
+import { AuthRequest } from '../../types/auth-request'
+import { User } from '../../models/user'
+import { createToken } from '../../utils/jwt'
 
-import { COMMON_ERRORS, USER_ERRORS } from '../constants/errors'
-import { HTTP_STATUS } from '../constants/http-status'
-import { RESPONSE_STATUS } from '../constants/response-status'
-import { AuthRequest } from '../types/auth-request'
+import { COMMON_ERRORS, USER_ERRORS } from '../../constants/errors'
+import { HTTP_STATUS } from '../../constants/http-status'
+import { RESPONSE_STATUS } from '../../constants/response-status'
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
     const { email, password, firstname } = req.body
@@ -26,7 +26,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
             .json({
                 status: RESPONSE_STATUS.OK,
                 code: HTTP_STATUS.OK,
-                token,
+                user,
             })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -58,7 +58,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
             .json({
                 status: RESPONSE_STATUS.OK,
                 code: HTTP_STATUS.OK,
-                token,
+                user,
             })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED

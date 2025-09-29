@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { signin, signup, profile } from '../controllers/user.controller'
+import { signin, signup, profile } from '../../controllers/client/user.controller'
 
-import { requireAuth } from '../middlewares/require-auth.middleware'
+import { requireAuth } from '../../middlewares/require-auth.middleware'
 
 const router = Router()
 
