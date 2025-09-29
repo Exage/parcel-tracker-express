@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getHealth, postPing } from '../controllers/health.controller'
+import { getHealth, postPing } from '../../controllers/client/health.controller'
 
 const router = Router()
 

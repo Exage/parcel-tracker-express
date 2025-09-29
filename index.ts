@@ -1,13 +1,22 @@
 import dotenv from 'dotenv'
-import express from 'express'
+import express, { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 
-import healthRouter from './routes/health.routes'
-import userRouter from './routes/user.routes'
+// Client Routes
+import healthClientRouter from './routes/client/health.routes'
+import userClientRouter from './routes/client/user.routes'
+
+// Client Routes
+import signinAdminRouter from './routes/admin/signin.routes'
+import usersAdminRouter from './routes/admin/users.routes'
 
 import { logger } from './middlewares/logger.middleware'
+
+import { COMMON_ERRORS } from './constants/errors'
+import { HTTP_STATUS } from './constants/http-status'
+import { RESPONSE_STATUS } from './constants/response-status'
 
 dotenv.config()
 
@@ -18,8 +27,21 @@ app.use(cookieParser())
 
 app.use(logger)
 
-app.use('/api/health', healthRouter)
-app.use('/api/user', userRouter)
+// Client Routes
+app.use('/api/health', healthClientRouter)
+app.use('/api/user', userClientRouter)
+
+// Admin Routes
+app.use('/api/admin/signin', signinAdminRouter)
+app.use('/api/admin/users', usersAdminRouter)
+
+app.use((_: Request, res: Response) => {
+    res.status(HTTP_STATUS.NOT_FOUND).json({
+        status: RESPONSE_STATUS.ERROR,
+        message: COMMON_ERRORS.ROUTE_NOT_FOUND,
+        code: HTTP_STATUS.NOT_FOUND,
+    })
+})
 
 mongoose
     .connect(process.env.MONGO_URI || '')
@@ -29,6 +51,6 @@ mongoose
         })
     })
     .catch((error: unknown) => {
-        const msg = error instanceof Error ? error.message : 'Unexpected error'
+        const msg = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
         console.log('Error:', msg)
     })
