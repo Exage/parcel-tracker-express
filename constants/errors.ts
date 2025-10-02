@@ -15,6 +15,15 @@ export const USER_ERRORS = {
     ADMIN_SAME_ID: 'You cannot perform this action on your own account.',
 }
 
+export const COUNTRY_ERRORS = {
+    REQUIRED_FIELDS: 'All fields must be filled in!',
+    COUNTRY_CODE_USING: 'Country with this code already exists!',
+    INVALID_COUNTRY_CODE: 'Invalid country code!',
+    ID_REQUIRED: 'Country ID is required!',
+    NOT_FOUND: 'This country was not found!',
+    NOTHING_TO_UPDATE: 'Nothing to update!',
+}
+
 export const COMMON_ERRORS = {
     UNEXPECTED: 'Unexpected error',
     ROUTE_NOT_FOUND: 'Route not found',
