@@ -12,6 +12,7 @@ import userClientRouter from './routes/client/user.routes'
 import signinAdminRouter from './routes/admin/signin.routes'
 import usersAdminRouter from './routes/admin/users.routes'
 import countryAdminRouter from './routes/admin/countries.routes'
+import cityAdminRouter from './routes/admin/cities.routes'
 
 import { logger } from './middlewares/logger.middleware'
 
@@ -36,6 +37,7 @@ app.use('/api/user', userClientRouter)
 app.use('/api/admin/signin', signinAdminRouter)
 app.use('/api/admin/users', usersAdminRouter)
 app.use('/api/admin/country', countryAdminRouter)
+app.use('/api/admin/city', cityAdminRouter)
 
 app.use((_: Request, res: Response) => {
     res.status(HTTP_STATUS.NOT_FOUND).json({
