@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { AdminRequest } from '../../types/admin-request'
 import { City } from '../../models/city'
 
-import { COMMON_ERRORS } from '../../constants/errors'
+import { CITY_ERRORS, COMMON_ERRORS } from '../../constants/errors'
 import { HTTP_STATUS } from '../../constants/http-status'
 import { RESPONSE_STATUS } from '../../constants/response-status'
 
@@ -34,6 +34,10 @@ export const getCity = async (req: AdminRequest, res: Response): Promise<void> =
 
     try {
         const city = await City.findById(id).populate('countryId')
+
+        if (!city) {
+            throw new Error(CITY_ERRORS.NOT_FOUND)
+        }
 
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,

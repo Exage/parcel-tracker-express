@@ -1,21 +1,36 @@
 import { Response } from 'express'
 import { AdminRequest } from '../../types/admin-request'
-import { Country } from '../../models/country'
+import { Location } from '../../models/location'
 
-import { COMMON_ERRORS, COUNTRY_ERRORS } from '../../constants/errors'
+import { COMMON_ERRORS, LOCATION_ERRORS } from '../../constants/errors'
 import { HTTP_STATUS } from '../../constants/http-status'
 import { RESPONSE_STATUS } from '../../constants/response-status'
 
-export const createCountry = async (req: AdminRequest, res: Response): Promise<void> => {
-    const { name, countryCode } = req.body
+export const createLocation = async (req: AdminRequest, res: Response): Promise<void> => {
+    const { type, label, locationCode, cityId, postalCode, street } = req.body
 
     try {
-        const country = await Country.createCountry({ name, countryCode })
+        const location = await Location.createLocation({
+            type,
+            label,
+            locationCode,
+            cityId,
+            postalCode,
+            street,
+        })
+        await location.populate({
+            path: 'cityId',
+            select: '-_id -__v',
+            populate: {
+                path: 'countryId',
+                select: '-_id -__v',
+            },
+        })
 
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            country,
+            location,
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -28,20 +43,27 @@ export const createCountry = async (req: AdminRequest, res: Response): Promise<v
     }
 }
 
-export const getCountry = async (req: AdminRequest, res: Response): Promise<void> => {
+export const getLocation = async (req: AdminRequest, res: Response): Promise<void> => {
     const { id } = req.params
 
     try {
-        const country = await Country.findById(id)
+        const location = await Location.findById(id).populate({
+            path: 'cityId',
+            select: '-_id -__v',
+            populate: {
+                path: 'countryId',
+                select: '-_id -__v',
+            },
+        })
 
-        if (!country) {
-            throw new Error(COUNTRY_ERRORS.NOT_FOUND)
+        if (!location) {
+            throw new Error(LOCATION_ERRORS.NOT_FOUND)
         }
 
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            country,
+            location,
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -54,7 +76,7 @@ export const getCountry = async (req: AdminRequest, res: Response): Promise<void
     }
 }
 
-export const getAllCountries = async (req: AdminRequest, res: Response) => {
+export const getAllLocations = async (req: AdminRequest, res: Response) => {
     const { page: reqPage, limit: reqLimit } = req.query
 
     try {
@@ -67,14 +89,28 @@ export const getAllCountries = async (req: AdminRequest, res: Response) => {
         const filter: any = {}
         if (search) {
             filter.$or = [
-                { name: { $regex: search, $options: 'i' } },
-                { countryCode: { $regex: search, $options: 'i' } },
+                { label: { $regex: search, $options: 'i' } },
+                { locationCode: { $regex: search, $options: 'i' } },
+                { postalCode: { $regex: search, $options: 'i' } },
+                { street: { $regex: search, $options: 'i' } },
             ]
         }
 
         const [total, countries] = await Promise.all([
-            Country.countDocuments(filter),
-            Country.find(filter).sort(sort).skip(skip).limit(limit).lean(),
+            Location.countDocuments(filter),
+            Location.find(filter)
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .populate({
+                    path: 'cityId',
+                    select: '-_id -__v',
+                    populate: {
+                        path: 'countryId',
+                        select: '-_id -__v',
+                    },
+                })
+                .lean({ virtuals: true }),
         ])
 
         res.status(HTTP_STATUS.OK).json({
@@ -97,17 +133,30 @@ export const getAllCountries = async (req: AdminRequest, res: Response) => {
     }
 }
 
-export const patchCountry = async (req: AdminRequest, res: Response): Promise<void> => {
-    const { id } = req.params
-    const { name, countryCode } = req.body
+export const patchLocation = async (req: AdminRequest, res: Response): Promise<void> => {
+    const { id, type, label, locationCode, cityId, postalCode, street } = req.body
 
     try {
-        const country = await Country.patchCountry({ _id: id, name, countryCode })
+        const location = await Location.patchLocation({
+            _id: id,
+            type,
+            label,
+            locationCode,
+            cityId,
+            postalCode,
+            street,
+        })
+        await location.populate({
+            path: 'cityId',
+            populate: {
+                path: 'countryId',
+            },
+        })
 
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            country,
+            location,
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -120,16 +169,16 @@ export const patchCountry = async (req: AdminRequest, res: Response): Promise<vo
     }
 }
 
-export const deleteCountry = async (req: AdminRequest, res: Response): Promise<void> => {
+export const deleteLocation = async (req: AdminRequest, res: Response): Promise<void> => {
     const { id } = req.params
 
     try {
-        const country = await Country.deleteCountry({ _id: id })
+        const location = await Location.deleteLocation({ _id: id })
 
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            country,
+            location,
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED

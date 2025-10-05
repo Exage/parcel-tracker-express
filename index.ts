@@ -8,11 +8,12 @@ import cookieParser from 'cookie-parser'
 import healthClientRouter from './routes/client/health.routes'
 import userClientRouter from './routes/client/user.routes'
 
-// Client Routes
+// Admin Routes
 import signinAdminRouter from './routes/admin/signin.routes'
 import usersAdminRouter from './routes/admin/users.routes'
 import countryAdminRouter from './routes/admin/countries.routes'
 import cityAdminRouter from './routes/admin/cities.routes'
+import locationAdminRouter from './routes/admin/locations.routes'
 
 import { logger } from './middlewares/logger.middleware'
 
@@ -38,6 +39,7 @@ app.use('/api/admin/signin', signinAdminRouter)
 app.use('/api/admin/users', usersAdminRouter)
 app.use('/api/admin/country', countryAdminRouter)
 app.use('/api/admin/city', cityAdminRouter)
+app.use('/api/admin/location', locationAdminRouter)
 
 app.use((_: Request, res: Response) => {
     res.status(HTTP_STATUS.NOT_FOUND).json({

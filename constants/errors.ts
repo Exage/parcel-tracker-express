@@ -32,6 +32,14 @@ export const CITY_ERRORS = {
     NOTHING_TO_UPDATE: 'Nothing to update!',
 }
 
+export const LOCATION_ERRORS = {
+    REQUIRED_FIELDS: 'All fields must be filled in!',
+    LOCATION_CODE_USING: 'Location with this code already exists!',
+    NOT_FOUND: 'This location was not found!',
+    ID_REQUIRED: 'Location ID is required!',
+    NOTHING_TO_UPDATE: 'Nothing to update!',
+}
+
 export const COMMON_ERRORS = {
     UNEXPECTED: 'Unexpected error',
     ROUTE_NOT_FOUND: 'Route not found',
