@@ -14,6 +14,7 @@ import usersAdminRouter from './routes/admin/users.routes'
 import countryAdminRouter from './routes/admin/countries.routes'
 import cityAdminRouter from './routes/admin/cities.routes'
 import locationAdminRouter from './routes/admin/locations.routes'
+import orderAdminRouter from './routes/admin/order.routes'
 
 import { logger } from './middlewares/logger.middleware'
 
@@ -40,6 +41,7 @@ app.use('/api/admin/users', usersAdminRouter)
 app.use('/api/admin/country', countryAdminRouter)
 app.use('/api/admin/city', cityAdminRouter)
 app.use('/api/admin/location', locationAdminRouter)
+app.use('/api/admin/order', orderAdminRouter)
 
 app.use((_: Request, res: Response) => {
     res.status(HTTP_STATUS.NOT_FOUND).json({
