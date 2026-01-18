@@ -7,6 +7,8 @@ import cookieParser from 'cookie-parser'
 // Client Routes
 import healthClientRouter from './routes/client/health.routes'
 import userClientRouter from './routes/client/user.routes'
+import trackingClientRouter from './routes/client/tracking.routes'
+import clientOrdersRouter from './routes/client/orders.routes'
 
 // Admin Routes
 import signinAdminRouter from './routes/admin/signin.routes'
@@ -14,6 +16,7 @@ import usersAdminRouter from './routes/admin/users.routes'
 import countryAdminRouter from './routes/admin/countries.routes'
 import cityAdminRouter from './routes/admin/cities.routes'
 import locationAdminRouter from './routes/admin/locations.routes'
+import orderAdminRouter from './routes/admin/order.routes'
 
 import { logger } from './middlewares/logger.middleware'
 
@@ -33,6 +36,8 @@ app.use(logger)
 // Client Routes
 app.use('/api/health', healthClientRouter)
 app.use('/api/user', userClientRouter)
+app.use('/api/tracking', trackingClientRouter)
+app.use('/api/orders', clientOrdersRouter)
 
 // Admin Routes
 app.use('/api/admin/signin', signinAdminRouter)
@@ -40,6 +45,7 @@ app.use('/api/admin/users', usersAdminRouter)
 app.use('/api/admin/country', countryAdminRouter)
 app.use('/api/admin/city', cityAdminRouter)
 app.use('/api/admin/location', locationAdminRouter)
+app.use('/api/admin/order', orderAdminRouter)
 
 app.use((_: Request, res: Response) => {
     res.status(HTTP_STATUS.NOT_FOUND).json({

@@ -40,6 +40,20 @@ export const LOCATION_ERRORS = {
     NOTHING_TO_UPDATE: 'Nothing to update!',
 }
 
+export const ORDER_ERRORS = {
+    REQUIRED_FIELDS: 'All fields must be filled in!',
+    GENERATE_CODE_FAILED: 'Failed to generate a unique order code',
+    UNDEFINED_OID: 'Missing OID!',
+    NOT_FOUND: 'This order was not found!',
+}
+
+export const EVENT_ERRORS = {
+    REQUIRED_FIELDS: 'All fields must be filled in!',
+    GENERATE_CODE_FAILED: 'Failed to generate a unique order code',
+    ID_REQUIRED: 'Event ID is required!',
+    NOT_FOUND: 'This event was not found!',
+}
+
 export const COMMON_ERRORS = {
     UNEXPECTED: 'Unexpected error',
     ROUTE_NOT_FOUND: 'Route not found',
