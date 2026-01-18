@@ -7,6 +7,8 @@ import cookieParser from 'cookie-parser'
 // Client Routes
 import healthClientRouter from './routes/client/health.routes'
 import userClientRouter from './routes/client/user.routes'
+import trackingClientRouter from './routes/client/tracking.routes'
+import clientOrdersRouter from './routes/client/orders.routes'
 
 // Admin Routes
 import signinAdminRouter from './routes/admin/signin.routes'
@@ -34,6 +36,8 @@ app.use(logger)
 // Client Routes
 app.use('/api/health', healthClientRouter)
 app.use('/api/user', userClientRouter)
+app.use('/api/tracking', trackingClientRouter)
+app.use('/api/orders', clientOrdersRouter)
 
 // Admin Routes
 app.use('/api/admin/signin', signinAdminRouter)
