@@ -26,7 +26,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
             .json({
                 status: RESPONSE_STATUS.OK,
                 code: HTTP_STATUS.OK,
-                user,
+                data: { user },
             })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -63,11 +63,13 @@ export const getAllUsers = async (req: Request, res: Response) => {
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            page,
-            limit,
-            total,
-            pages: Math.ceil(total / limit),
-            data: users,
+            data: {
+                page,
+                limit,
+                total,
+                pages: Math.ceil(total / limit),
+                users,
+            },
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -89,7 +91,7 @@ export const createUser = async (req: Request, res: Response) => {
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            user,
+            data: { user },
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -115,7 +117,7 @@ export const getUser = async (req: Request, res: Response) => {
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            user,
+            data: { user },
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -147,7 +149,7 @@ export const patchUser = async (req: AdminRequest, res: Response) => {
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            user,
+            data: { user },
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -178,7 +180,7 @@ export const deleteUser = async (req: AdminRequest, res: Response) => {
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            user,
+            data: { user },
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED
@@ -210,7 +212,7 @@ export const resetUserPassword = async (req: AdminRequest, res: Response) => {
         res.status(HTTP_STATUS.OK).json({
             status: RESPONSE_STATUS.OK,
             code: HTTP_STATUS.OK,
-            user,
+            data: { user },
         })
     } catch (error) {
         const message = error instanceof Error ? error.message : COMMON_ERRORS.UNEXPECTED

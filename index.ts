@@ -11,7 +11,6 @@ import trackingClientRouter from './routes/client/tracking.routes'
 import clientOrdersRouter from './routes/client/orders.routes'
 
 // Admin Routes
-import signinAdminRouter from './routes/admin/signin.routes'
 import usersAdminRouter from './routes/admin/users.routes'
 import countryAdminRouter from './routes/admin/countries.routes'
 import cityAdminRouter from './routes/admin/cities.routes'
@@ -27,7 +26,12 @@ import { RESPONSE_STATUS } from './constants/response-status'
 dotenv.config()
 
 const app = express()
-app.use(cors())
+app.use(
+    cors({
+        origin: 'http://localhost:3000',
+        credentials: true,
+    })
+)
 app.use(express.json())
 app.use(cookieParser())
 
@@ -40,7 +44,6 @@ app.use('/api/tracking', trackingClientRouter)
 app.use('/api/orders', clientOrdersRouter)
 
 // Admin Routes
-app.use('/api/admin/signin', signinAdminRouter)
 app.use('/api/admin/users', usersAdminRouter)
 app.use('/api/admin/country', countryAdminRouter)
 app.use('/api/admin/city', cityAdminRouter)

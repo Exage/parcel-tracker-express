@@ -7,6 +7,34 @@ import { COMMON_ERRORS, EVENT_ERRORS, ORDER_ERRORS } from '../../constants/error
 import { HTTP_STATUS } from '../../constants/http-status'
 import { RESPONSE_STATUS } from '../../constants/response-status'
 
+// ES (Event Status) -> OS (Order Status)
+const mapEventStatusToOrderStatus = (es: number) => {
+    switch (es) {
+        case 0:
+            return 0 // created
+        case 1:
+            return 1 // shipped
+        case 2:
+            return 1 // in_transit -> shipped (в OS нет отдельного)
+        case 3:
+            return 1 // out_for_delivery -> shipped (в OS нет отдельного)
+        case 4:
+            return 2 // delivered
+        case 5:
+            return 3 // at_pickup_point
+        case 6:
+            return 5 // returned
+        default:
+            return 0
+    }
+}
+
+const normalizeNumber = (value: unknown) => {
+    if (value === undefined) return undefined
+    const n = typeof value === 'string' ? parseInt(value, 10) : (value as number)
+    return Number.isNaN(n) ? undefined : n
+}
+
 export const createOrder = async (req: AdminRequest, res: Response): Promise<void> => {
     const { name, userId, pickupLocation, currentLocation } = req.body
 
@@ -318,29 +346,58 @@ export const createEvent = async (req: AdminRequest, res: Response): Promise<voi
     const { oid } = req.params
     const { location, status, description } = req.body
 
+    // ES (Event Status) -> OS (Order Status)
+    // OS: 0 created, 1 shipped, 2 delivered, 3 at_pickup_point, 5 returned
+    // ES: 0 created, 1 shipped, 2 in_transit, 3 out_for_delivery, 4 delivered, 5 at_pickup_point, 6 returned
+    const mapEventStatusToOrderStatus = (es: number) => {
+        switch (es) {
+            case 0:
+                return 0 // created
+            case 1:
+                return 1 // shipped
+            case 2:
+                return 1 // in_transit -> shipped
+            case 3:
+                return 1 // out_for_delivery -> shipped
+            case 4:
+                return 2 // delivered
+            case 5:
+                return 3 // at_pickup_point
+            case 6:
+                return 5 // returned
+            default:
+                return 0
+        }
+    }
+
     try {
-        if (!oid) {
-            throw new Error(ORDER_ERRORS.UNDEFINED_OID)
+        if (!oid) throw new Error(ORDER_ERRORS.UNDEFINED_OID)
+
+        const eventStatus = typeof status === 'string' ? parseInt(status, 10) : status
+        if (Number.isNaN(eventStatus)) {
+            throw new Error(`${EVENT_ERRORS.REQUIRED_FIELDS}: status`)
         }
 
         const orderExists = await Order.findById(oid)
-        if (!orderExists) {
-            throw new Error(ORDER_ERRORS.NOT_FOUND)
-        }
+        if (!orderExists) throw new Error(ORDER_ERRORS.NOT_FOUND)
 
-        const event = await Event.createEvent({ orderId: oid, location, status, description })
+        const event = await Event.createEvent({
+            orderId: oid,
+            location,
+            status: eventStatus,
+            description,
+        })
+
+        const orderStatus = mapEventStatusToOrderStatus(eventStatus)
 
         const updatedOrder = await Order.findByIdAndUpdate(
             oid,
-            { $set: { status, currentLocation: location } },
+            { $set: { status: orderStatus, currentLocation: location } },
             { new: true, runValidators: true, context: 'query' }
         )
 
-        if (!updatedOrder) {
-            throw new Error(ORDER_ERRORS.NOT_FOUND)
-        }
+        if (!updatedOrder) throw new Error(ORDER_ERRORS.NOT_FOUND)
 
-        // deep populate как у тебя в остальных местах
         const locationPopulate = {
             select: '-_id -__v',
             populate: {
@@ -499,20 +556,29 @@ export const patchEvent = async (req: AdminRequest, res: Response): Promise<void
             throw new Error(EVENT_ERRORS.NOT_FOUND)
         }
 
+        // иногда status приходит строкой из select
+        const parsedStatus = normalizeNumber(status)
+        if (status !== undefined && parsedStatus === undefined) {
+            throw new Error(`${EVENT_ERRORS.REQUIRED_FIELDS}: status`)
+        }
+
         // патчим само событие
         const event = await Event.patchEvent({
             _id: id,
-            orderId: oid, // Event.patchEvent это игнорит, но оставим для читаемости
+            orderId: oid, // Event.patchEvent игнорит, но оставим для читаемости
             location,
-            status,
+            status: parsedStatus,
             description,
         })
 
-        // ✅ пересчитываем "текущее состояние" заказа по последнему событию
+        // ✅ пересчитываем "текущее состояние" заказа по последнему событию (НО статус маппим в OS)
         const lastEvent = await Event.findOne({ orderId: oid }).sort({ createdAt: -1 })
 
         const orderUpdate = lastEvent
-            ? { status: lastEvent.status, currentLocation: lastEvent.location }
+            ? {
+                  status: mapEventStatusToOrderStatus(lastEvent.status),
+                  currentLocation: lastEvent.location,
+              }
             : { status: 0, currentLocation: order.pickupLocation }
 
         const updatedOrder = await Order.findByIdAndUpdate(
@@ -594,7 +660,10 @@ export const deleteEvent = async (req: AdminRequest, res: Response): Promise<voi
         const lastEvent = await Event.findOne({ orderId: oid }).sort({ createdAt: -1 })
 
         const orderUpdate = lastEvent
-            ? { status: lastEvent.status, currentLocation: lastEvent.location }
+            ? {
+                  status: mapEventStatusToOrderStatus(lastEvent.status),
+                  currentLocation: lastEvent.location,
+              }
             : { status: 0, currentLocation: order.pickupLocation }
 
         const updatedOrder = await Order.findByIdAndUpdate(

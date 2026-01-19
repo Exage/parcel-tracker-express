@@ -4,6 +4,6 @@ import { getUserOrders } from '../../controllers/client/orders.controller'
 
 const router = Router()
 
-router.get('/my', requireAuth, getUserOrders)
+router.get('/', requireAuth, getUserOrders)
 
 export default router
